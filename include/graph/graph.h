@@ -84,7 +84,7 @@ protected:
     PropertyDict dict_;
 };
 
-std::ostream& operator<< (std::ostream& os, const GraphElement& element)
+inline std::ostream& operator<< (std::ostream& os, const GraphElement& element)
 {
     element.print_summary(os);
     return os;
@@ -290,22 +290,26 @@ public:
     }
     //@}
 
-    int get_num_vertices()
+    unsigned long get_num_vertices()
     {
         return vertices_.size();
     }
 
-    int get_unused_id()
+    VertexIdType get_unused_id()
     {
         VertexIdType maxVal = 0;
-        for (auto p : vertices_)
+        if (!vertices_.empty())
         {
-            if (p.first > maxVal)
+            for (auto p : vertices_)
             {
-                maxVal = p.first;
+                if (p.first > maxVal)
+                {
+                    maxVal = p.first;
+                }
             }
+            maxVal++;
         }
-        return maxVal + 1;
+        return maxVal;
     }
 
     /// Output graph structure to GraphViz dot format.
@@ -412,7 +416,7 @@ protected:
     {
         if (vertices_.find(vid) == vertices_.end())
         {
-            throw std::runtime_error("The vertex does not exist.");
+            throw std::runtime_error("Vertex #" + std::to_string(vid) + " does not exist.");
         }
     }
 
